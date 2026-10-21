@@ -1,4 +1,4 @@
-const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333';
+const BASE = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 export async function api(path, { method = 'GET', body } = {}) {
   const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;

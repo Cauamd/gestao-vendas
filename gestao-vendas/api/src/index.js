@@ -7,6 +7,12 @@ const nodemailer = require('nodemailer');
 const db = require('./db');
 
 const app = express();
+// Public Vercel rewrite mounts this service below /api. Strip the prefix so
+// the same Express routes continue to work when running locally.
+app.use((req, res, next) => {
+  req.url = req.url.replace(/^\/api(?=\/|$)/, '') || '/';
+  next();
+});
 app.use(cors());
 app.use(express.json());
 
@@ -239,4 +245,8 @@ app.delete('/supplier-items/:id', wrap((req, res) => {
 }));
 
 const PORT = process.env.PORT || 3333;
-app.listen(PORT, () => console.log(`API rodando em http://localhost:${PORT}`));
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => console.log(`API rodando em http://localhost:${PORT}`));
+}
+
+module.exports = app;
