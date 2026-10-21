@@ -60,6 +60,10 @@ notepad .env
 
 Preencha `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER` e `SMTP_PASS` com os dados do seu provedor. `SMTP_FROM` é opcional e, se omitido, usa `SMTP_USER`. Depois inicie ou reinicie a API com `npm run dev`. O `.env` é carregado pela API e ignorado pelo Git; não coloque essas credenciais no frontend nem em variáveis `NEXT_PUBLIC_*`.
 
+### SMTP no deploy da Vercel
+
+O arquivo `api/.env` só vale localmente. Para o site publicado, cadastre em **Vercel → Project → Settings → Environment Variables** as variáveis `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS` e `SMTP_FROM`, usando os mesmos valores do `api/.env`. Se usa Gmail, `SMTP_PASS` deve ser uma senha de app. Marque Production (e Preview, se também quiser testar previews) e faça um novo deploy; variáveis novas não alteram deploys já publicados.
+
 ## Banco persistente na Vercel
 
 Em produção, conecte um PostgreSQL pelo Marketplace da Vercel (por exemplo, Neon) e configure a variável privada `DATABASE_URL` ou `POSTGRES_URL` para o serviço da API nos ambientes Production e Preview. Use a connection string pooled do Neon (hostname com `-pooler`); a API cria as tabelas ao iniciar e não usa SQLite temporário na Vercel.
