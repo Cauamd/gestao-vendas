@@ -62,18 +62,18 @@ export default function LoginPage() {
 
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#19002f] bg-cover bg-center bg-no-repeat px-4 py-10" style={{ backgroundImage: "url('/login-background.svg')" }}>
-      <section className="relative w-full max-w-sm rounded-3xl border border-white/80 bg-white/90 p-8 shadow-2xl shadow-rose-900/10 backdrop-blur sm:p-10">
+      <section className="relative w-full max-w-sm rounded-3xl border border-fuchsia-200/30 bg-gradient-to-br from-[#3b0757]/90 via-[#26043f]/90 to-[#5b0c67]/90 p-8 shadow-2xl shadow-purple-950/40 backdrop-blur sm:p-10">
         <div className="mb-8">
           <div className="mb-7 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500 to-rose-700 text-xl font-extrabold text-white shadow-lg shadow-rose-500/25">V</div>
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-rose-700">Minhas vendas</p>
-          <h1 className="mt-2 text-3xl font-bold tracking-tight text-ink">Bem-vinda de volta</h1>
-          <p className="mt-2 text-sm leading-6 text-slate-500">Entre para acessar seu painel de vendas.</p>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-rose-200">Minhas vendas</p>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-white">Bem-vinda de volta</h1>
+          <p className="mt-2 text-sm leading-6 text-fuchsia-100/75">Entre para acessar seu painel de vendas.</p>
         </div>
         <form onSubmit={submit} className="space-y-5">
-          <label className="mx-auto block max-w-xs text-sm font-semibold text-ink">Nome de usuário
+          <label className="mx-auto block max-w-xs text-sm font-semibold text-white">Nome de usuário
             <input className="input mt-1.5" autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
           </label>
-          <label className="mx-auto block max-w-xs text-sm font-semibold text-ink">Senha
+          <label className="mx-auto block max-w-xs text-sm font-semibold text-white">Senha
             <input className="input mt-1.5" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
           </label>
           {error && <p role="alert" className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
