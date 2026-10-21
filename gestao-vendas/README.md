@@ -60,3 +60,17 @@ notepad .env
 
 Preencha `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER` e `SMTP_PASS` com os dados do seu provedor. `SMTP_FROM` é opcional e, se omitido, usa `SMTP_USER`. Depois inicie ou reinicie a API com `npm run dev`. O `.env` é carregado pela API e ignorado pelo Git; não coloque essas credenciais no frontend nem em variáveis `NEXT_PUBLIC_*`.
 
+## Banco persistente na Vercel
+
+Em produção, conecte um PostgreSQL pelo Marketplace da Vercel (por exemplo, Neon) e configure a variável privada `DATABASE_URL` para o serviço da API nos ambientes Production e Preview. A API cria as tabelas ao iniciar; sem essa variável, ela não usa um SQLite temporário na Vercel.
+
+Para importar o banco SQLite local para o PostgreSQL, adicione `DATABASE_URL` ao arquivo `api/.env` local e execute:
+
+```powershell
+cd api
+npm install
+npm run migrate:sqlite
+```
+
+O script importa os produtos, clientes, fornecedores, vendas e itens do arquivo `api/vendas.db`; ele pode ser executado novamente sem duplicar registros já importados. Faça o redeploy depois de configurar a variável na Vercel. A rota `/api/health` informa se a API está usando `postgres` ou `sqlite-local`.
+
