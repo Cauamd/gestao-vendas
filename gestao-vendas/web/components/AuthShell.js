@@ -1,0 +1,28 @@
+'use client';
+import { useEffect, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import Sidebar from '@/components/Sidebar';
+
+export default function AuthShell({ children }) {
+  const path = usePathname();
+  const router = useRouter();
+  const isLogin = path === '/login';
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const check = () => {
+      const authenticated = Boolean(localStorage.getItem('auth_token'));
+      if (!authenticated && !isLogin) router.replace('/login');
+      if (authenticated && isLogin) router.replace('/kanban');
+      setReady(authenticated || isLogin);
+    };
+    check();
+    const expired = () => { setReady(false); router.replace('/login'); };
+    window.addEventListener('auth-expired', expired);
+    return () => window.removeEventListener('auth-expired', expired);
+  }, [isLogin, router]);
+
+  if (!ready) return <div className="min-h-screen bg-paper" />;
+  if (isLogin) return children;
+  return <Sidebar>{children}</Sidebar>;
+}
