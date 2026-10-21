@@ -2,7 +2,13 @@
 const { DatabaseSync } = require('node:sqlite');
 const path = require('path');
 
-const db = new DatabaseSync(path.join(__dirname, '..', 'vendas.db'));
+// Vercel's function filesystem is read-only except for /tmp. This SQLite file
+// is only suitable for temporary previews; use an external database for data
+// that must persist or be shared between function instances.
+const dbPath = process.env.SQLITE_PATH || (process.env.VERCEL
+  ? path.join('/tmp', 'vendas.db')
+  : path.join(__dirname, '..', 'vendas.db'));
+const db = new DatabaseSync(dbPath);
 db.exec('PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;');
 
 // Executa a função dentro de uma transação: ou grava tudo, ou nada

@@ -3,3 +3,5 @@ node_modules
 *.db
 *.db-*
 api/.env
+web/.env.local
+web/.env.development.local

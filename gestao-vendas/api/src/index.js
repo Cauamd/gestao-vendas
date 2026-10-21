@@ -15,6 +15,10 @@ app.use((req, res, next) => {
 });
 app.use(cors());
 app.use(express.json());
+app.get('/health', (req, res) => {
+  db.prepare('SELECT 1').get();
+  res.json({ ok: true });
+});
 
 // Credenciais únicas conforme solicitado; podem ser configuradas no ambiente.
 const LOGIN_USER = process.env.LOGIN_USER || 'dani';
