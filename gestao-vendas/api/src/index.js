@@ -23,24 +23,44 @@ app.get('/health', (req, res) => {
 // Credenciais únicas conforme solicitado; podem ser configuradas no ambiente.
 const LOGIN_USER = process.env.LOGIN_USER || 'dani';
 const LOGIN_PASSWORD = process.env.LOGIN_PASSWORD || 'fdtop';
-const sessions = new Set();
+const AUTH_TOKEN_SECRET = process.env.AUTH_TOKEN_SECRET || LOGIN_PASSWORD;
+const TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60;
+function createAuthToken(username) {
+  const payload = Buffer.from(JSON.stringify({
+    sub: username,
+    exp: Math.floor(Date.now() / 1000) + TOKEN_TTL_SECONDS,
+  })).toString('base64url');
+  const signature = crypto.createHmac('sha256', AUTH_TOKEN_SECRET).update(payload).digest('base64url');
+  return `${payload}.${signature}`;
+}
+function isValidAuthToken(token) {
+  if (!token) return false;
+  const [payload, signature, extra] = token.split('.');
+  if (!payload || !signature || extra) return false;
+  const expected = crypto.createHmac('sha256', AUTH_TOKEN_SECRET).update(payload).digest();
+  const received = Buffer.from(signature, 'base64url');
+  if (received.length !== expected.length || !crypto.timingSafeEqual(received, expected)) return false;
+  try {
+    const claims = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8'));
+    return claims.sub === LOGIN_USER && Number(claims.exp) > Math.floor(Date.now() / 1000);
+  } catch {
+    return false;
+  }
+}
 app.post('/auth/login', (req, res) => {
   if (req.body?.username !== LOGIN_USER || req.body?.password !== LOGIN_PASSWORD) {
     return res.status(401).json({ error: 'Usuário ou senha inválidos' });
   }
-  const token = crypto.randomBytes(32).toString('hex');
-  sessions.add(token);
+  const token = createAuthToken(LOGIN_USER);
   res.json({ token, username: LOGIN_USER });
 });
 app.use((req, res, next) => {
   if (req.path === '/auth/login') return next();
   const token = req.headers.authorization?.replace(/^Bearer\s+/i, '');
-  if (!token || !sessions.has(token)) return res.status(401).json({ error: 'Faça login para continuar' });
+  if (!isValidAuthToken(token)) return res.status(401).json({ error: 'Faça login para continuar' });
   next();
 });
 app.post('/auth/logout', (req, res) => {
-  const token = req.headers.authorization?.replace(/^Bearer\s+/i, '');
-  if (token) sessions.delete(token);
   res.status(204).end();
 });
 

@@ -22,7 +22,11 @@ export default function AuthShell({ children }) {
     return () => window.removeEventListener('auth-expired', expired);
   }, [isLogin, router]);
 
-  if (!ready) return <div className="min-h-screen bg-paper" />;
+  if (!ready) return (
+    <div className="flex min-h-screen items-center justify-center bg-paper text-sm text-ink" role="status">
+      Verificando sessão…
+    </div>
+  );
   if (isLogin) return children;
   return <Sidebar>{children}</Sidebar>;
 }
