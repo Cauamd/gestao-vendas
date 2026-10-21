@@ -62,9 +62,9 @@ Preencha `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER` e `SMTP_PASS` com 
 
 ## Banco persistente na Vercel
 
-Em produção, conecte um PostgreSQL pelo Marketplace da Vercel (por exemplo, Neon) e configure a variável privada `DATABASE_URL` para o serviço da API nos ambientes Production e Preview. A API cria as tabelas ao iniciar; sem essa variável, ela não usa um SQLite temporário na Vercel.
+Em produção, conecte um PostgreSQL pelo Marketplace da Vercel (por exemplo, Neon) e configure a variável privada `DATABASE_URL` ou `POSTGRES_URL` para o serviço da API nos ambientes Production e Preview. Use a connection string pooled do Neon (hostname com `-pooler`); a API cria as tabelas ao iniciar e não usa SQLite temporário na Vercel.
 
-Para importar o banco SQLite local para o PostgreSQL, adicione `DATABASE_URL` ao arquivo `api/.env` local e execute:
+Para importar o banco SQLite local para o PostgreSQL, adicione `DATABASE_URL` ou `POSTGRES_URL` ao arquivo `api/.env` local e execute. Faça isso em um banco Neon vazio ou dedicado à aplicação:
 
 ```powershell
 cd api

@@ -5,7 +5,7 @@ const { DatabaseSync } = require('node:sqlite');
 const db = require('./db');
 
 async function main() {
-  if (!process.env.DATABASE_URL) throw new Error('Defina DATABASE_URL antes de migrar.');
+  if (!process.env.DATABASE_URL && !process.env.POSTGRES_URL) throw new Error('Defina DATABASE_URL ou POSTGRES_URL antes de migrar.');
   const sourcePath = process.env.SQLITE_SOURCE || path.join(__dirname, '..', 'vendas.db');
   const source = new DatabaseSync(sourcePath, { readOnly: true });
   const tables = ['products', 'customers', 'suppliers', 'sales', 'sale_items', 'supplier_items'];

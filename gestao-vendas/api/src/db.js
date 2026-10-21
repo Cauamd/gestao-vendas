@@ -1,6 +1,6 @@
 const path = require('node:path');
 
-const connectionString = process.env.DATABASE_URL;
+const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL;
 let sqlite;
 let pool;
 
@@ -63,7 +63,7 @@ const ready = connectionString
     })()
   : (() => {
       if (process.env.VERCEL) {
-        throw new Error('DATABASE_URL ausente: conecte um PostgreSQL persistente para habilitar a API na Vercel.');
+        throw new Error('DATABASE_URL/POSTGRES_URL ausente: conecte um PostgreSQL persistente para habilitar a API na Vercel.');
       }
       const { DatabaseSync } = require('node:sqlite');
       const dbPath = process.env.SQLITE_PATH || path.join(__dirname, '..', 'vendas.db');

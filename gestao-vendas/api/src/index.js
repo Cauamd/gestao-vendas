@@ -16,7 +16,7 @@ app.use(express.json());
 app.get('/health', async (req, res, next) => {
   try {
     await db.query('SELECT 1');
-    res.json({ ok: true, database: process.env.DATABASE_URL ? 'postgres' : 'sqlite-local' });
+    res.json({ ok: true, database: process.env.DATABASE_URL || process.env.POSTGRES_URL ? 'postgres' : 'sqlite-local' });
   } catch (error) { next(error); }
 });
 
