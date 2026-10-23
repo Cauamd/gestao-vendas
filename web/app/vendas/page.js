@@ -1,4 +1,5 @@
 'use client';
+import { StyledSelect } from '@/components/StyledSelect';
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { MessageCircle, Pencil, Plus, Trash2 } from 'lucide-react';
@@ -242,7 +243,7 @@ function Vendas() {
 
         <div className="grid gap-3 sm:grid-cols-3">
           <Field label="Cliente" className="sm:col-span-1">
-            <select
+            <StyledSelect
               className="input"
               required
               value={customerId}
@@ -254,11 +255,11 @@ function Vendas() {
                   {c.name}
                 </option>
               ))}
-            </select>
+            </StyledSelect>
           </Field>
 
           <Field label="Forma de pagamento">
-            <select
+            <StyledSelect
               className="input"
               value={paymentMethod}
               onChange={(e) => setPaymentMethod(e.target.value)}
@@ -268,12 +269,12 @@ function Vendas() {
                   {pm}
                 </option>
               ))}
-            </select>
+            </StyledSelect>
           </Field>
 
           {paymentMethod === 'Cartão Crédito' ? (
             <Field label="Parcelas (até 12x)">
-              <select
+              <StyledSelect
                 className="input"
                 value={installments}
                 onChange={(e) => setInstallments(Number(e.target.value))}
@@ -283,7 +284,7 @@ function Vendas() {
                     {n}x {total > 0 ? `de ${brl(total / n)}` : ''}
                   </option>
                 ))}
-              </select>
+              </StyledSelect>
             </Field>
           ) : (
             <div className="hidden sm:block" />
@@ -295,7 +296,7 @@ function Vendas() {
           {lines.map((l, i) => (
             <div key={i} className="grid items-end gap-2 sm:grid-cols-[1fr_6rem_8rem_auto]">
               <Field label={i === 0 ? 'Produto' : ''}>
-                <select
+                <StyledSelect
                   className="input"
                   value={l.product_id}
                   onChange={(e) => setLine(i, { product_id: e.target.value })}
@@ -306,7 +307,7 @@ function Vendas() {
                       {p.name} ({p.quantity} em estoque)
                     </option>
                   ))}
-                </select>
+                </StyledSelect>
               </Field>
               <Field label={i === 0 ? 'Quantidade' : ''}>
                 <input
@@ -366,7 +367,7 @@ function Vendas() {
               <tr>
                 <th className="p-3">Data</th>
                 <th className="p-3">Cliente</th>
-                <th className="p-3">Forma Pagto</th>
+                <th className="p-3">Forma de pagamento</th>
                 <th className="p-3">Itens</th>
                 <th className="p-3 text-right">Total</th>
                 <th className="p-3 text-right">Ações</th>
@@ -433,7 +434,7 @@ function Vendas() {
 
             <div className="grid gap-3 sm:grid-cols-3">
               <Field label="Cliente" className="sm:col-span-1">
-                <select
+                <StyledSelect
                   className="input"
                   required
                   value={editingSale.customer_id}
@@ -442,11 +443,11 @@ function Vendas() {
                   {customers.map((c) => (
                     <option key={c.id} value={c.id}>{c.name}</option>
                   ))}
-                </select>
+                </StyledSelect>
               </Field>
 
               <Field label="Forma de pagamento">
-                <select
+                <StyledSelect
                   className="input"
                   value={editingSale.payment_method}
                   onChange={(e) => setEditingSale({ ...editingSale, payment_method: e.target.value })}
@@ -454,12 +455,12 @@ function Vendas() {
                   {PAYMENT_METHODS.map((pm) => (
                     <option key={pm} value={pm}>{pm}</option>
                   ))}
-                </select>
+                </StyledSelect>
               </Field>
 
               {editingSale.payment_method === 'Cartão Crédito' ? (
                 <Field label="Parcelas (até 12x)">
-                  <select
+                  <StyledSelect
                     className="input"
                     value={editingSale.installments}
                     onChange={(e) => setEditingSale({ ...editingSale, installments: Number(e.target.value) })}
@@ -469,7 +470,7 @@ function Vendas() {
                         {n}x {editTotal > 0 ? `de ${brl(editTotal / n)}` : ''}
                       </option>
                     ))}
-                  </select>
+                  </StyledSelect>
                 </Field>
               ) : (
                 <div className="hidden sm:block" />
@@ -482,7 +483,7 @@ function Vendas() {
               {editingSale.items.map((item, i) => (
                 <div key={i} className="grid items-end gap-2 sm:grid-cols-[1fr_5rem_7rem_auto]">
                   <Field label={i === 0 ? 'Produto' : ''}>
-                    <select
+                    <StyledSelect
                       className="input"
                       value={item.product_id}
                       onChange={(e) => setEditLine(i, { product_id: e.target.value })}
@@ -493,7 +494,7 @@ function Vendas() {
                           {p.name} ({p.quantity} em estoque)
                         </option>
                       ))}
-                    </select>
+                    </StyledSelect>
                   </Field>
 
                   <Field label={i === 0 ? 'Qtd.' : ''}>

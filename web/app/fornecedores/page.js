@@ -1,4 +1,5 @@
 'use client';
+import { StyledSelect } from '@/components/StyledSelect';
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
 import { PageHeader, Modal, Field, ErrorNote, Empty } from '@/components/ui';
@@ -51,14 +52,14 @@ function SupplierCard({ s, onChange, onEdit }) {
             <h2 className="text-lg font-bold text-ink">{s.name}</h2>
             {s.payment_method && (
               <span className="rounded-md bg-rose-50 px-2 py-0.5 text-xs font-semibold text-brand">
-                Pagto: {s.payment_method}
+                Forma de pagamento: {s.payment_method}
               </span>
             )}
           </div>
 
           {locationInfo && (
             <p className="mt-1 text-xs text-slate-600 font-medium">
-              📍 {locationInfo}
+              ðŸ“ {locationInfo}
             </p>
           )}
 
@@ -125,7 +126,7 @@ function SupplierCard({ s, onChange, onEdit }) {
           value={item.item}
           onChange={(e) => setItem({ ...item, item: e.target.value })}
         />
-        <select
+        <StyledSelect
           className="input"
           aria-label="Onde vende"
           value={item.platform}
@@ -134,7 +135,7 @@ function SupplierCard({ s, onChange, onEdit }) {
           {PLATFORMS.map((p) => (
             <option key={p}>{p}</option>
           ))}
-        </select>
+        </StyledSelect>
         <input
           className="input"
           type="url"
@@ -225,7 +226,7 @@ export default function FornecedoresPage() {
             </Field>
 
             <Field label="Forma de pagamento" className="sm:col-span-2">
-              <select
+              <StyledSelect
                 className="input"
                 value={editing.payment_method || 'Pix'}
                 onChange={set('payment_method')}
@@ -233,7 +234,7 @@ export default function FornecedoresPage() {
                 {PAYMENT_METHODS.map((pm) => (
                   <option key={pm} value={pm}>{pm}</option>
                 ))}
-              </select>
+              </StyledSelect>
             </Field>
 
             <Field label="CEP" className="sm:col-span-2">

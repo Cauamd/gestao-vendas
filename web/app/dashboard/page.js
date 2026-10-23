@@ -1,4 +1,5 @@
 'use client';
+import { StyledSelect } from '@/components/StyledSelect';
 import { useEffect, useState } from 'react';
 import { api, brl } from '@/lib/api';
 import { PageHeader, ErrorNote, Empty } from '@/components/ui';
@@ -57,7 +58,7 @@ export default function DashboardPage() {
           <div className="flex flex-wrap items-center gap-2">
             <div className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm shadow-sm">
               <Calendar className="h-4 w-4 text-slate-500" />
-              <select
+              <StyledSelect
                 aria-label="Mês"
                 value={month}
                 onChange={(e) => setMonth(Number(e.target.value))}
@@ -68,10 +69,10 @@ export default function DashboardPage() {
                     {m}
                   </option>
                 ))}
-              </select>
+              </StyledSelect>
             </div>
             <div className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm shadow-sm">
-              <select
+              <StyledSelect
                 aria-label="Ano"
                 value={year}
                 onChange={(e) => setYear(Number(e.target.value))}
@@ -82,7 +83,7 @@ export default function DashboardPage() {
                     {y}
                   </option>
                 ))}
-              </select>
+              </StyledSelect>
             </div>
           </div>
         }
@@ -107,7 +108,7 @@ export default function DashboardPage() {
               {data ? brl(data.monthly_total) : '...'}
             </div>
             <p className="mt-1 text-xs text-slate-500">
-              {data ? `${data.monthly_count} venda(s) realizada(s)` : 'Carregando...'}
+              {data ? `${data.monthly_count} ${data.monthly_count === 1 ? 'venda realizada' : 'vendas realizadas'}` : 'Carregando...'}
             </p>
           </div>
           <div className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-rose-400 to-brand" />
@@ -128,7 +129,7 @@ export default function DashboardPage() {
               {data ? brl(data.yearly_total) : '...'}
             </div>
             <p className="mt-1 text-xs text-slate-500">
-              {data ? `${data.yearly_count} venda(s) acumulada(s)` : 'Carregando...'}
+              {data ? `${data.yearly_count} ${data.yearly_count === 1 ? 'venda acumulada' : 'vendas acumuladas'}` : 'Carregando...'}
             </p>
           </div>
           <div className="absolute -bottom-1 left-0 right-0 h-1 bg-ink" />
@@ -213,7 +214,7 @@ export default function DashboardPage() {
                   {/* Tooltip no hover */}
                   <div className="pointer-events-none absolute -top-10 z-10 hidden whitespace-nowrap rounded-md bg-ink px-2 py-1 text-center text-xs font-semibold text-white shadow-lg group-hover:block">
                     <div>{item.name}: {brl(item.total)}</div>
-                    <div className="text-[10px] text-rose-200">{item.count} venda(s)</div>
+                    <div className="text-[10px] text-rose-200">{item.count} {item.count === 1 ? 'venda' : 'vendas'}</div>
                   </div>
 
                   {/* Valor acima da barra se houver venda */}

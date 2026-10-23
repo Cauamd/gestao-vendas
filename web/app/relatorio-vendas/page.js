@@ -1,4 +1,5 @@
 'use client';
+import { StyledSelect } from '@/components/StyledSelect';
 import { useEffect, useState } from 'react';
 import { api, brl, dateBR } from '@/lib/api';
 import { PageHeader, Field, ErrorNote, Empty } from '@/components/ui';
@@ -111,7 +112,7 @@ export default function RelatorioVendasPage() {
             </Field>
 
             <Field label="Cliente">
-              <select
+              <StyledSelect
                 className="input"
                 value={customerId}
                 onChange={(e) => setCustomerId(e.target.value)}
@@ -122,11 +123,11 @@ export default function RelatorioVendasPage() {
                     {c.name}
                   </option>
                 ))}
-              </select>
+              </StyledSelect>
             </Field>
 
             <Field label="Produto">
-              <select
+              <StyledSelect
                 className="input"
                 value={productId}
                 onChange={(e) => setProductId(e.target.value)}
@@ -137,7 +138,7 @@ export default function RelatorioVendasPage() {
                     {p.name}
                   </option>
                 ))}
-              </select>
+              </StyledSelect>
             </Field>
           </div>
         </div>
@@ -167,7 +168,7 @@ export default function RelatorioVendasPage() {
           <div className={`mt-2 text-2xl font-extrabold ${summary.total_profit >= 0 ? 'text-emerald-700' : 'text-red-600'}`}>
             {brl(summary.total_profit)}
           </div>
-          <span className="text-xs text-slate-500">Venda subtraído do Custo</span>
+          <span className="text-xs text-slate-500">Lucro após descontar o custo</span>
         </div>
 
         {/* Margem Percentual */}
@@ -195,7 +196,7 @@ export default function RelatorioVendasPage() {
                 <th className="p-3 text-right">Valor Total Custo</th>
                 <th className="p-3 text-right">Valor Total Venda</th>
                 <th className="p-3 text-right">Margem Lucro</th>
-                <th className="p-3 text-center">Forma Pagto</th>
+                <th className="p-3 text-center">Forma de pagamento</th>
               </tr>
             </thead>
             <tbody>

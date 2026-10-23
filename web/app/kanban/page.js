@@ -1,4 +1,5 @@
 'use client';
+import { StyledSelect } from '@/components/StyledSelect';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
@@ -63,10 +64,10 @@ export default function KanbanPage() {
                     <Link href={`/clientes/${c.id}`} className="font-semibold hover:underline">{c.name}</Link>
                     <p className="text-xs text-slate-500">{[c.phone, c.city].filter(Boolean).join(' · ') || 'Sem contato'}</p>
                     {/* alternativa ao arrastar (celular e teclado) */}
-                    <select aria-label={`Mover ${c.name}`} value={c.stage} onChange={(e) => move(c.id, e.target.value)}
+                    <StyledSelect aria-label={`Mover ${c.name}`} value={c.stage} onChange={(e) => move(c.id, e.target.value)}
                       className="mt-2 w-full rounded border border-slate-200 bg-slate-50 px-2 py-1 text-xs">
                       {COLUMNS.map((o) => <option key={o.id} value={o.id}>{o.title}</option>)}
-                    </select>
+                    </StyledSelect>
                   </li>
                 ))}
               </ul>

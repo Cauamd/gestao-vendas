@@ -1,4 +1,5 @@
 'use client';
+import { StyledSelect } from '@/components/StyledSelect';
 import { useEffect, useState } from 'react';
 import { api, brl, dateBR } from '@/lib/api';
 import { PageHeader, Modal, Field, ErrorNote, Empty } from '@/components/ui';
@@ -116,11 +117,11 @@ export default function ComprasPage() {
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <input
           className="input max-w-sm"
-          placeholder="Buscar por nome, produto, forma de pagto..."
+          placeholder="Buscar por nome, produto ou forma de pagamento..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <select
+        <StyledSelect
           className="input max-w-[10rem]"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
@@ -128,7 +129,7 @@ export default function ComprasPage() {
           <option value="TODOS">Todos os status</option>
           <option value="A PAGAR">A PAGAR</option>
           <option value="PAGO">PAGO</option>
-        </select>
+        </StyledSelect>
       </div>
 
       <ErrorNote message={editing ? '' : error} />
@@ -234,7 +235,7 @@ export default function ComprasPage() {
             </Field>
 
             <Field label="Status de pagamento" className="sm:col-span-2">
-              <select
+              <StyledSelect
                 className="input font-semibold"
                 value={editing.payment_status || 'A PAGAR'}
                 onChange={set('payment_status')}
@@ -242,11 +243,11 @@ export default function ComprasPage() {
                 {PAYMENT_STATUSES.map((st) => (
                   <option key={st} value={st}>{st}</option>
                 ))}
-              </select>
+              </StyledSelect>
             </Field>
 
             <Field label="Produto do catálogo (opcional)" className="sm:col-span-3">
-              <select
+              <StyledSelect
                 className="input"
                 value={editing.product_id || ''}
                 onChange={(e) => onSelectProduct(e.target.value)}
@@ -255,7 +256,7 @@ export default function ComprasPage() {
                 {products.map((p) => (
                   <option key={p.id} value={p.id}>{p.name}</option>
                 ))}
-              </select>
+              </StyledSelect>
             </Field>
 
             <Field label="Nome do produto / Item" className="sm:col-span-3">
@@ -315,7 +316,7 @@ export default function ComprasPage() {
             </Field>
 
             <Field label="Forma de pagamento" className="sm:col-span-3">
-              <select
+              <StyledSelect
                 className="input"
                 value={editing.payment_method || 'Pix'}
                 onChange={set('payment_method')}
@@ -323,7 +324,7 @@ export default function ComprasPage() {
                 {PAYMENT_METHODS.map((pm) => (
                   <option key={pm} value={pm}>{pm}</option>
                 ))}
-              </select>
+              </StyledSelect>
             </Field>
 
             {editing.payment_method === 'Pix' && (

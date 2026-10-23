@@ -1,4 +1,5 @@
 'use client';
+import { StyledSelect } from '@/components/StyledSelect';
 import { useEffect, useState } from 'react';
 import { api, brl } from '@/lib/api';
 import { PageHeader, Field, ErrorNote, Empty } from '@/components/ui';
@@ -97,7 +98,7 @@ export default function RelatorioComprasPage() {
             </Field>
 
             <Field label="Status de pagamento">
-              <select
+              <StyledSelect
                 className="input"
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
@@ -106,11 +107,11 @@ export default function RelatorioComprasPage() {
                 {PAYMENT_STATUSES.map((st) => (
                   <option key={st} value={st}>{st}</option>
                 ))}
-              </select>
+              </StyledSelect>
             </Field>
 
             <Field label="Forma de pagamento">
-              <select
+              <StyledSelect
                 className="input"
                 value={paymentMethod}
                 onChange={(e) => setPaymentMethod(e.target.value)}
@@ -119,7 +120,7 @@ export default function RelatorioComprasPage() {
                 {PAYMENT_METHODS.map((pm) => (
                   <option key={pm} value={pm}>{pm}</option>
                 ))}
-              </select>
+              </StyledSelect>
             </Field>
 
             <Field label="Data inicial">
