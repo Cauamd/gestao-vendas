@@ -38,7 +38,7 @@ export default function LoginPage() {
         animationFinished,
       ]);
       localStorage.setItem('auth_token', result.token);
-      router.replace('/kanban');
+      router.replace('/dashboard');
     } catch (e) {
       await animationFinished;
       setError(e.message);

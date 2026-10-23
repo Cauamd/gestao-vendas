@@ -13,7 +13,7 @@ export default function AuthShell({ children }) {
     const check = () => {
       const authenticated = Boolean(localStorage.getItem('auth_token'));
       if (!authenticated && !isLogin) router.replace('/login');
-      if (authenticated && isLogin) router.replace('/kanban');
+      if (authenticated && isLogin) router.replace('/dashboard');
       setReady(authenticated || isLogin);
     };
     check();

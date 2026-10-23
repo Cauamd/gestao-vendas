@@ -8,7 +8,7 @@ async function main() {
   if (!process.env.DATABASE_URL && !process.env.POSTGRES_URL) throw new Error('Defina DATABASE_URL ou POSTGRES_URL antes de migrar.');
   const sourcePath = process.env.SQLITE_SOURCE || path.join(__dirname, '..', 'vendas.db');
   const source = new DatabaseSync(sourcePath, { readOnly: true });
-  const tables = ['products', 'customers', 'suppliers', 'sales', 'sale_items', 'supplier_items'];
+  const tables = ['products', 'customers', 'suppliers', 'sales', 'sale_items', 'supplier_items', 'purchases', 'customer_interactions'];
 
   try {
     await db.ready;

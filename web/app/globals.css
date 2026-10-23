@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body { @apply bg-paper text-ink font-sans antialiased; }
+:focus-visible { outline: 2px solid #E91E63; outline-offset: 3px; }
+::selection { @apply bg-rose-200 text-ink; }
+.input { @apply w-full rounded-lg border border-rose-700 bg-rose-700 px-3.5 py-2.5 text-sm text-white shadow-sm transition placeholder:text-white/60 hover:border-rose-600 focus:border-rose-500 focus:outline-none focus:ring-4 focus:ring-rose-200; }
+.btn { @apply inline-flex items-center justify-center rounded-lg bg-brand px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-md disabled:translate-y-0 disabled:opacity-50; }
+.btn-ghost { @apply inline-flex items-center justify-center rounded-lg border border-rose-200 bg-white px-3 py-2 text-sm font-medium text-ink transition hover:border-rose-300 hover:bg-rose-50; }
+.btn-danger { @apply text-sm font-medium text-red-700 hover:underline; }
+table { @apply overflow-hidden rounded-xl; }
+thead { @apply bg-rose-50 text-ink; }
+tbody tr { @apply border-t border-rose-100 transition-colors hover:bg-rose-50/60; }
+::placeholder { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

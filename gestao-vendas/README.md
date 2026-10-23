@@ -1,80 +1,54 @@
-﻿# Minhas vendas
+# Minhas vendas
 
-Sistema de gestÃ£o de vendas: API em Express (SQLite embutido do Node) + frontend em Next.js.
+Sistema de gestão de vendas: API em Express (SQLite embutido do Node ou PostgreSQL) + frontend em Next.js.
 
 ## Como rodar
 
-Precisa do Node.js 22.13 ou mais novo (o SQLite jÃ¡ vem embutido, nÃ£o precisa instalar compilador). Abra dois terminais.
+Precisa do Node.js 22.13 ou mais novo (o SQLite já vem embutido, não precisa instalar compilador). Abra dois terminais.
 
 **Terminal 1: API (porta 3333)**
-```
+```powershell
 cd api
 npm install
 npm run dev
 ```
 
 **Terminal 2: Frontend (porta 3000)**
-```
+```powershell
 cd web
 npm install
 npm run dev
 ```
 
-Acesse http://localhost:3000. O banco (`api/vendas.db`) Ã© criado sozinho na primeira execuÃ§Ã£o.
-Se a API estiver em outro endereÃ§o, ajuste `NEXT_PUBLIC_API_URL` em `web/.env.local`.
+Acesse http://localhost:3000. O banco (`api/vendas.db`) é criado e atualizado sozinho na primeira execução.
+Se a API estiver em outro endereço, ajuste `NEXT_PUBLIC_API_URL` em `web/.env.local`.
 
-## O que tem
+## Recursos do Sistema
 
-- **Funil de clientes (Kanban):** Conversando, Em andamento e Finalizado. Arraste os cartÃµes ou use o seletor de cada cartÃ£o.
-- **Vendas:** escolhe o cliente e os produtos; o estoque baixa sozinho e o preÃ§o fica salvo no histÃ³rico.
-- **Clientes:** nome, endereÃ§o com nÃºmero, bairro, cidade, CEP (preenche rua, bairro e cidade pelo ViaCEP), CPF, CNPJ, e-mail e telefone. A pÃ¡gina de cada cliente mostra as compras com itens, quantidades e preÃ§os.
-- **Produtos:** produto, valor unitÃ¡rio e quantidade, com aviso de estoque baixo.
-- **Fornecedores:** cadastro com link principal e uma lista do que cada um vende (item, onde vende e link).
+- **Dashboard inicial:** visualização do valor arrecadado no mês e no ano todo, gráfico interativo de vendas em cada mês (Jan a Dez), gráfico dos Top 5 produtos mais vendidos, e indicadores gerais.
+- **Funil de clientes (Kanban):** Conversando, Em andamento e Finalizado. Arraste os cartões ou use o seletor de cada cartão.
+- **Vendas:** registro de venda com cliente, forma de pagamento (Pix, Dinheiro, Cartão Débito e Cartão Crédito em até 12x), produtos, quantidades e preços unitários; controle de estoque automático; envio de orçamentos por e-mail e WhatsApp; e **edição completa de vendas** (alteração/exclusão/adição de itens com estorno e recálculo de estoque).
+- **Relatório de Vendas:** filtros por período de data de venda, produto e cliente; exibição de quantidade vendida, valor unitário de custo, valor unitário de venda, valor total de custo, valor total de venda, margem de lucro e forma de pagamento, com somatórios gerais e opção de impressão.
+- **Clientes:** nome, cargo, pessoa de contato, endereço com número, bairro, cidade, CEP (preenche via ViaCEP), CPF, CNPJ, e-mail, telefone e **espaço de diálogo com o cliente e observações** com histórico de contatos.
+- **Produtos:** produto, valor unitário de custo, valor unitário de venda, **margem de lucro unitária calculada automaticamente** e quantidade em estoque com aviso de estoque baixo.
+- **Fornecedores:** cadastro com link principal, telefone, forma de pagamento, endereço, cidade, CEP (com busca ViaCEP), observações e lista de itens que o fornecedor vende.
+- **Compras:** gerenciamento de pedidos e compras com nome, link de compra, valor unitário, valor total, quantidade, produto vinculado, status de pagamento (**PAGO** ou **A PAGAR**), prazo de pagamento manual, data de pagamento e forma de pagamento (Pix com chave de acesso, Cartão de Crédito com dados do cartão/banco, Débito e Dinheiro).
+- **Relatório de Compras:** relatório com filtros por data, status (Todos, PAGO, A PAGAR), forma de pagamento e produto/nome, com indicadores de total de compras, total pago e total a pagar.
 
 ## Rotas da API
 
 | Recurso | Rotas |
 |---|---|
+| Dashboard | `GET /dashboard` (parâmetros `year` e `month`) |
 | Produtos | `GET/POST /products`, `GET/PUT/DELETE /products/:id` |
 | Clientes | `GET/POST /customers`, `GET/PUT/DELETE /customers/:id`, `PATCH /customers/:id/stage`, `GET /customers/:id/sales` |
-| Vendas | `GET/POST /sales` |
+| Diálogo com Cliente | `GET/POST /customers/:id/interactions`, `DELETE /customer-interactions/:id` |
+| Vendas | `GET/POST /sales`, `GET/PUT/DELETE /sales/:id`, `POST /sales/:id/email-quote` |
+| Relatório de Vendas | `GET /reports/sales` (filtros por `start_date`, `end_date`, `customer_id`, `product_id`) |
 | Fornecedores | `GET/POST /suppliers`, `PUT/DELETE /suppliers/:id`, `POST /suppliers/:id/items`, `DELETE /supplier-items/:id` |
+| Compras | `GET/POST /purchases`, `GET/PUT/DELETE /purchases/:id` |
+| Relatório de Compras | `GET /reports/purchases` (filtros por `start_date`, `end_date`, `payment_status`, `payment_method`, `query`) |
 
 ## Acesso
 
-Acesse http://localhost:3000/login. O usuário inicial é dani e a senha é fdtop. Para alterar as credenciais, defina LOGIN_USER e LOGIN_PASSWORD no ambiente da API. As rotas de dados exigem uma sessão iniciada; as sessões são encerradas quando a API reinicia.
-
-## Envio de orçamentos por e-mail
-
-Na tela **Vendas**, use **Enviar orçamento** na linha da venda. O sistema envia os itens, quantidades, preços e total registrados, além de uma mensagem opcional. O endereço do cliente é preenchido automaticamente quando cadastrado e pode ser alterado antes do envio.
-
-Também é possível usar **WhatsApp** na venda. O sistema abre a conversa do telefone cadastrado com os itens e o total preenchidos; confirme o envio no WhatsApp.
-
-Configure o SMTP uma vez no arquivo `api/.env`. Copie o modelo e edite os dados:
-
-```powershell
-cd api
-Copy-Item .env.example .env
-notepad .env
-```
-
-Preencha `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER` e `SMTP_PASS` com os dados do seu provedor. `SMTP_FROM` é opcional e, se omitido, usa `SMTP_USER`. Depois inicie ou reinicie a API com `npm run dev`. O `.env` é carregado pela API e ignorado pelo Git; não coloque essas credenciais no frontend nem em variáveis `NEXT_PUBLIC_*`.
-
-### SMTP no deploy da Vercel
-
-O arquivo `api/.env` só vale localmente. Para o site publicado, cadastre em **Vercel → Project → Settings → Environment Variables** as variáveis `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS` e `SMTP_FROM`, usando os mesmos valores do `api/.env`. Se usa Gmail, `SMTP_PASS` deve ser uma senha de app. Marque Production (e Preview, se também quiser testar previews) e faça um novo deploy; variáveis novas não alteram deploys já publicados.
-
-## Banco persistente na Vercel
-
-Em produção, conecte um PostgreSQL pelo Marketplace da Vercel (por exemplo, Neon) e configure a variável privada `DATABASE_URL` ou `POSTGRES_URL` para o serviço da API nos ambientes Production e Preview. Use a connection string pooled do Neon (hostname com `-pooler`); a API cria as tabelas ao iniciar e não usa SQLite temporário na Vercel.
-
-Para importar o banco SQLite local para o PostgreSQL, adicione `DATABASE_URL` ou `POSTGRES_URL` ao arquivo `api/.env` local e execute. Faça isso em um banco Neon vazio ou dedicado à aplicação:
-
-```powershell
-cd api
-npm install
-npm run migrate:sqlite
-```
-
-O script importa os produtos, clientes, fornecedores, vendas e itens do arquivo `api/vendas.db`; ele pode ser executado novamente sem duplicar registros já importados. Faça o redeploy depois de configurar a variável na Vercel. A rota `/api/health` informa se a API está usando `postgres` ou `sqlite-local`.
-
+Acesse http://localhost:3000/login. O usuário inicial é `dani` e a senha é `fdtop`. Para alterar as credenciais, defina `LOGIN_USER` e `LOGIN_PASSWORD` no ambiente da API. As rotas de dados exigem uma sessão iniciada; as sessões são encerradas quando a API reinicia.
