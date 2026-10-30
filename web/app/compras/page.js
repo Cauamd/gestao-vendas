@@ -17,7 +17,6 @@ const blank = {
   product_id: '',
   product_name: '',
   payment_date: '',
-  purchase_date: '',
   due_date: '',
   payment_status: 'A PAGAR',
   payment_method: 'Pix',
@@ -109,7 +108,7 @@ export default function ComprasPage() {
         title="Compras"
         subtitle="Controle suas compras de mercadorias, insumos, fornecedores, status de pagamento e prazos."
         action={
-          <button className="btn" onClick={() => { setError(''); setEditing({ ...blank, purchase_date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10) }); }}>
+          <button className="btn" onClick={() => { setError(''); setEditing(blank); }}>
             Nova compra
           </button>
         }
@@ -171,11 +170,6 @@ export default function ComprasPage() {
                     </td>
                     <td className="p-3 font-semibold text-ink">
                       <div>{p.name}</div>
-                      {p.purchase_date && (
-                        <div className="text-xs font-normal text-slate-500">
-                          Compra: {p.purchase_date.split('-').reverse().join('/')}
-                        </div>
-                      )}
                       {p.purchase_link && (
                         <a
                           href={p.purchase_link}
@@ -359,16 +353,7 @@ export default function ComprasPage() {
               <div className="hidden sm:block sm:col-span-3" />
             )}
 
-            <Field label="Data da compra" className="sm:col-span-2">
-              <input
-                className="input"
-                type="date"
-                value={editing.purchase_date || ''}
-                onChange={set('purchase_date')}
-              />
-            </Field>
-
-            <Field label="Prazo Pagamento (data manual)" className="sm:col-span-2">
+            <Field label="Prazo Pagamento (data manual)" className="sm:col-span-3">
               <input
                 className="input"
                 type="text"
@@ -378,7 +363,7 @@ export default function ComprasPage() {
               />
             </Field>
 
-            <Field label="Data pagamento" className="sm:col-span-2">
+            <Field label="Data pagamento" className="sm:col-span-3">
               <input
                 className="input"
                 type="text"

@@ -221,15 +221,6 @@ app.delete('/supplier-items/:id', wrap(async (req, res) => {
 }));
 
 // ---------------- VENDAS ----------------
-const pad2 = (n) => String(n).padStart(2, '0');
-const isoDate = (value) => (/^\d{4}-\d{2}-\d{2}$/.test(String(value || '').trim()) ? String(value).trim() : null);
-const timeOf = (value) => {
-  if (value instanceof Date) return `${pad2(value.getHours())}:${pad2(value.getMinutes())}:${pad2(value.getSeconds())}`;
-  const part = String(value || '').split(/[ T]/)[1];
-  return part ? part.slice(0, 8) : null;
-};
-const nowTime = () => timeOf(new Date());
-const nowStamp = () => { const d = new Date(); return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())} ${nowTime()}`; };
 const withItems = async (sale, query = db.query) => ({ ...sale, items: await many('SELECT * FROM sale_items WHERE sale_id = ?', [sale.id], query) });
 
 app.get('/customers/:id/sales', wrap(async (req, res) => {
@@ -249,8 +240,7 @@ app.get('/sales/:id', wrap(async (req, res) => {
 }));
 
 app.post('/sales', wrap(async (req, res) => {
-  const { customer_id, items, payment_method = 'Pix', installments = 1, sale_date } = req.body;
-  const saleDate = isoDate(sale_date);
+  const { customer_id, items, payment_method = 'Pix', installments = 1 } = req.body;
   if (!Array.isArray(items) || items.length === 0) throw fail(400, 'Adicione ao menos um produto');
 
   const parsedInstallments = payment_method === 'Cartão Crédito' ? Math.max(1, Math.min(12, parseInt(installments, 10) || 1)) : 1;
@@ -273,8 +263,8 @@ app.post('/sales', wrap(async (req, res) => {
     }
 
     const created = await one(
-      'INSERT INTO sales (customer_id, total, payment_method, installments, created_at) VALUES (?, ?, ?, ?, ?) RETURNING *',
-      [customer_id, total, payment_method, parsedInstallments, saleDate ? `${saleDate} ${nowTime()}` : nowStamp()],
+      'INSERT INTO sales (customer_id, total, payment_method, installments) VALUES (?, ?, ?, ?) RETURNING *',
+      [customer_id, total, payment_method, parsedInstallments],
       query
     );
 
@@ -292,8 +282,7 @@ app.post('/sales', wrap(async (req, res) => {
 }));
 
 app.put('/sales/:id', wrap(async (req, res) => {
-  const { customer_id, items, payment_method = 'Pix', installments = 1, sale_date } = req.body;
-  const saleDate = isoDate(sale_date);
+  const { customer_id, items, payment_method = 'Pix', installments = 1 } = req.body;
   if (!Array.isArray(items) || items.length === 0) throw fail(400, 'Adicione ao menos um produto');
 
   const parsedInstallments = payment_method === 'Cartão Crédito' ? Math.max(1, Math.min(12, parseInt(installments, 10) || 1)) : 1;
@@ -330,8 +319,8 @@ app.put('/sales/:id', wrap(async (req, res) => {
 
     // 3. Atualiza registro principal da venda
     const updated = await one(
-      'UPDATE sales SET customer_id = ?, total = ?, payment_method = ?, installments = ?, created_at = ? WHERE id = ? RETURNING *',
-      [customer_id, total, payment_method, parsedInstallments, saleDate ? `${saleDate} ${timeOf(existing.created_at) || nowTime()}` : existing.created_at, req.params.id],
+      'UPDATE sales SET customer_id = ?, total = ?, payment_method = ?, installments = ? WHERE id = ? RETURNING *',
+      [customer_id, total, payment_method, parsedInstallments, req.params.id],
       query
     );
 
@@ -407,7 +396,7 @@ app.post('/sales/:id/email-quote', async (req, res) => {
 });
 
 // ---------------- COMPRAS ----------------
-const PURCHASE_FIELDS = ['name', 'purchase_link', 'unit_price', 'total_price', 'quantity', 'product_id', 'product_name', 'purchase_date', 'payment_date', 'due_date', 'payment_status', 'payment_method', 'pix_key', 'card_info'];
+const PURCHASE_FIELDS = ['name', 'purchase_link', 'unit_price', 'total_price', 'quantity', 'product_id', 'product_name', 'payment_date', 'due_date', 'payment_status', 'payment_method', 'pix_key', 'card_info'];
 
 crud('/purchases', 'purchases', PURCHASE_FIELDS, (body) => {
   const name = text(body.name);
@@ -426,7 +415,6 @@ crud('/purchases', 'purchases', PURCHASE_FIELDS, (body) => {
     quantity,
     product_id: body.product_id ? Number(body.product_id) : null,
     product_name: text(body.product_name),
-    purchase_date: isoDate(body.purchase_date),
     payment_date: text(body.payment_date),
     due_date: text(body.due_date),
     payment_status: ['PAGO', 'A PAGAR'].includes(body.payment_status) ? body.payment_status : 'A PAGAR',
@@ -507,11 +495,11 @@ app.get('/reports/purchases', wrap(async (req, res) => {
   const params = [];
 
   if (start_date) {
-    sql += ' AND (COALESCE(purchase_date, payment_date, due_date, created_at) >= ?)';
+    sql += ' AND (COALESCE(payment_date, due_date, created_at) >= ?)';
     params.push(start_date);
   }
   if (end_date) {
-    sql += ' AND (COALESCE(purchase_date, payment_date, due_date, created_at) <= ?)';
+    sql += ' AND (COALESCE(payment_date, due_date, created_at) <= ?)';
     params.push(`${end_date} 23:59:59`);
   }
   if (payment_status && payment_status !== 'TODOS') {

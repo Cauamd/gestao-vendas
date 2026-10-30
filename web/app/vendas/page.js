@@ -8,22 +8,6 @@ import { PageHeader, Field, ErrorNote, Empty, Modal } from '@/components/ui';
 
 const PAYMENT_METHODS = ['Pix', 'Dinheiro', 'Cartão Débito', 'Cartão Crédito'];
 
-const pad2 = (n) => String(n).padStart(2, '0');
-const todayISO = () => {
-  const d = new Date();
-  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
-};
-// Converte o created_at vindo da API (SQLite "YYYY-MM-DD HH:MM:SS" ou ISO do Postgres) para YYYY-MM-DD local
-const toInputDate = (value) => {
-  const s = String(value || '');
-  if (!s) return todayISO();
-  if (s.includes('T')) {
-    const d = new Date(s);
-    if (!Number.isNaN(d.getTime())) return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
-  }
-  return s.slice(0, 10);
-};
-
 function Vendas() {
   const params = useSearchParams();
   const [customers, setCustomers] = useState([]);
@@ -31,7 +15,6 @@ function Vendas() {
   const [sales, setSales] = useState([]);
   const [customerId, setCustomerId] = useState(params.get('cliente') || '');
   const [paymentMethod, setPaymentMethod] = useState('Pix');
-  const [saleDate, setSaleDate] = useState(todayISO());
   const [installments, setInstallments] = useState(1);
   const [lines, setLines] = useState([{ product_id: '', quantity: 1, unit_price: '' }]);
   const [error, setError] = useState('');
@@ -91,14 +74,12 @@ function Vendas() {
         body: {
           customer_id: Number(customerId),
           payment_method: paymentMethod,
-          sale_date: saleDate,
           installments: paymentMethod === 'Cartão Crédito' ? Number(installments) : 1,
           items: lines.filter((l) => l.product_id),
         },
       });
       setLines([{ product_id: '', quantity: 1, unit_price: '' }]);
       setPaymentMethod('Pix');
-      setSaleDate(todayISO());
       setInstallments(1);
       setOk('Venda registrada com sucesso e estoque atualizado.');
       load();
@@ -114,7 +95,6 @@ function Vendas() {
       id: sale.id,
       customer_id: String(sale.customer_id),
       payment_method: sale.payment_method || 'Pix',
-      sale_date: toInputDate(sale.created_at),
       installments: sale.installments || 1,
       items: sale.items.map((it) => ({
         product_id: it.product_id ? String(it.product_id) : '',
@@ -161,7 +141,6 @@ function Vendas() {
         body: {
           customer_id: Number(editingSale.customer_id),
           payment_method: editingSale.payment_method,
-          sale_date: editingSale.sale_date,
           installments: editingSale.payment_method === 'Cartão Crédito' ? Number(editingSale.installments) : 1,
           items: validItems,
         },
@@ -256,9 +235,6 @@ function Vendas() {
       {/* Formulário de Nova Venda */}
       <form onSubmit={submit} className="mb-8 space-y-4 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
         <ErrorNote message={error} />
-        <Field label="Data da venda" className="max-w-xs">
-          <input className="input" type="date" required value={saleDate} onChange={(e) => setSaleDate(e.target.value)} />
-        </Field>
         {ok && (
           <p role="status" className="rounded-md bg-brand-soft px-3 py-2 text-sm text-brand-dark font-medium">
             {ok}
@@ -452,9 +428,6 @@ function Vendas() {
         <Modal title={`Editar Venda #${editingSale.id}`} onClose={() => { if (!editSaving) setEditingSale(null); }}>
           <form onSubmit={saveEdit} className="space-y-4">
             <ErrorNote message={editError} />
-            <Field label="Data da venda" className="max-w-xs">
-              <input className="input" type="date" required value={editingSale.sale_date || ''} onChange={(e) => setEditingSale({ ...editingSale, sale_date: e.target.value })} />
-            </Field>
             <p className="text-xs text-slate-500">
               Você pode alterar o cliente, a forma de pagamento, e adicionar, alterar quantidades ou excluir itens. O estoque dos produtos será recalculado automaticamente.
             </p>

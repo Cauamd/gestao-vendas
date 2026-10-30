@@ -66,7 +66,6 @@ CREATE TABLE IF NOT EXISTS purchases (
   product_id INTEGER REFERENCES products(id) ON DELETE SET NULL,
   product_name TEXT,
   payment_date TEXT,
-  purchase_date TEXT,
   due_date TEXT,
   payment_status TEXT NOT NULL DEFAULT 'A PAGAR',
   payment_method TEXT,
@@ -89,7 +88,7 @@ const pgSchema = [
   `CREATE TABLE IF NOT EXISTS sale_items (id SERIAL PRIMARY KEY, sale_id INTEGER NOT NULL REFERENCES sales(id) ON DELETE CASCADE, product_id INTEGER REFERENCES products(id) ON DELETE SET NULL, product_name TEXT NOT NULL, cost_price DOUBLE PRECISION NOT NULL DEFAULT 0, unit_price DOUBLE PRECISION NOT NULL, quantity INTEGER NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS suppliers (id SERIAL PRIMARY KEY, name TEXT NOT NULL, link TEXT, phone TEXT, notes TEXT, payment_method TEXT, street TEXT, city TEXT, zip TEXT)`,
   `CREATE TABLE IF NOT EXISTS supplier_items (id SERIAL PRIMARY KEY, supplier_id INTEGER NOT NULL REFERENCES suppliers(id) ON DELETE CASCADE, item TEXT NOT NULL, platform TEXT, link TEXT)`,
-  `CREATE TABLE IF NOT EXISTS purchases (id SERIAL PRIMARY KEY, name TEXT NOT NULL, purchase_link TEXT, unit_price DOUBLE PRECISION NOT NULL DEFAULT 0, total_price DOUBLE PRECISION NOT NULL DEFAULT 0, quantity INTEGER NOT NULL DEFAULT 1, product_id INTEGER REFERENCES products(id) ON DELETE SET NULL, product_name TEXT, purchase_date TEXT, payment_date TEXT, due_date TEXT, payment_status TEXT NOT NULL DEFAULT 'A PAGAR', payment_method TEXT, pix_key TEXT, card_info TEXT, created_at TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP)`,
+  `CREATE TABLE IF NOT EXISTS purchases (id SERIAL PRIMARY KEY, name TEXT NOT NULL, purchase_link TEXT, unit_price DOUBLE PRECISION NOT NULL DEFAULT 0, total_price DOUBLE PRECISION NOT NULL DEFAULT 0, quantity INTEGER NOT NULL DEFAULT 1, product_id INTEGER REFERENCES products(id) ON DELETE SET NULL, product_name TEXT, payment_date TEXT, due_date TEXT, payment_status TEXT NOT NULL DEFAULT 'A PAGAR', payment_method TEXT, pix_key TEXT, card_info TEXT, created_at TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP)`,
   `CREATE TABLE IF NOT EXISTS customer_interactions (id SERIAL PRIMARY KEY, customer_id INTEGER NOT NULL REFERENCES customers(id) ON DELETE CASCADE, message TEXT NOT NULL, created_at TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP)`,
   `ALTER TABLE products ADD COLUMN IF NOT EXISTS cost_price DOUBLE PRECISION NOT NULL DEFAULT 0`,
   `ALTER TABLE products ADD COLUMN IF NOT EXISTS profit_margin DOUBLE PRECISION NOT NULL DEFAULT 0`,
@@ -102,7 +101,6 @@ const pgSchema = [
   `ALTER TABLE customers ADD COLUMN IF NOT EXISTS notes TEXT`,
   `ALTER TABLE sales ADD COLUMN IF NOT EXISTS payment_method TEXT DEFAULT 'Pix'`,
   `ALTER TABLE sales ADD COLUMN IF NOT EXISTS installments INTEGER DEFAULT 1`,
-  `ALTER TABLE purchases ADD COLUMN IF NOT EXISTS purchase_date TEXT`,
   `ALTER TABLE sale_items ADD COLUMN IF NOT EXISTS cost_price DOUBLE PRECISION NOT NULL DEFAULT 0`,
 ];
 
@@ -139,7 +137,6 @@ function migrateSqlite(dbInstance) {
   addColumnIfMissing('sales', 'installments', 'INTEGER DEFAULT 1');
 
   addColumnIfMissing('sale_items', 'cost_price', 'REAL NOT NULL DEFAULT 0');
-  addColumnIfMissing('purchases', 'purchase_date', 'TEXT');
 }
 
 const ready = connectionString
