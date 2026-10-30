@@ -6,6 +6,16 @@ import { api, brl, dateBR } from '@/lib/api';
 import { PageHeader, Field, ErrorNote, Empty, Modal } from '@/components/ui';
 
 const PAYMENT_METHODS = ['Pix', 'Dinheiro', 'Cartão Débito', 'Cartão Crédito'];
+const pad2 = (n) => String(n).padStart(2, '0');
+const todayISO = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+};
+const toInputDate = (v) => {
+  if (!v) return todayISO();
+  const m = String(v).match(/^(\d{4}-\d{2}-\d{2})/);
+  return m ? m[1] : todayISO();
+};
 
 function Vendas() {
   const params = useSearchParams();
@@ -14,6 +24,7 @@ function Vendas() {
   const [sales, setSales] = useState([]);
   const [customerId, setCustomerId] = useState(params.get('cliente') || '');
   const [paymentMethod, setPaymentMethod] = useState('Pix');
+  const [saleDate, setSaleDate] = useState(todayISO());
   const [installments, setInstallments] = useState(1);
   const [lines, setLines] = useState([{ product_id: '', quantity: 1, unit_price: '' }]);
   const [error, setError] = useState('');
@@ -72,6 +83,7 @@ function Vendas() {
         method: 'POST',
         body: {
           customer_id: Number(customerId),
+          sale_date: saleDate,
           payment_method: paymentMethod,
           installments: paymentMethod === 'Cartão Crédito' ? Number(installments) : 1,
           items: lines.filter((l) => l.product_id),
@@ -79,6 +91,7 @@ function Vendas() {
       });
       setLines([{ product_id: '', quantity: 1, unit_price: '' }]);
       setPaymentMethod('Pix');
+      setSaleDate(todayISO());
       setInstallments(1);
       setOk('Venda registrada com sucesso e estoque atualizado.');
       load();
@@ -93,6 +106,7 @@ function Vendas() {
     setEditingSale({
       id: sale.id,
       customer_id: String(sale.customer_id),
+      sale_date: toInputDate(sale.created_at),
       payment_method: sale.payment_method || 'Pix',
       installments: sale.installments || 1,
       items: sale.items.map((it) => ({
@@ -139,6 +153,7 @@ function Vendas() {
         method: 'PUT',
         body: {
           customer_id: Number(editingSale.customer_id),
+          sale_date: editingSale.sale_date,
           payment_method: editingSale.payment_method,
           installments: editingSale.payment_method === 'Cartão Crédito' ? Number(editingSale.installments) : 1,
           items: validItems,
@@ -240,7 +255,16 @@ function Vendas() {
           </p>
         )}
 
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-4">
+          <Field label="Data da venda" className="sm:col-span-1">
+            <input
+              className="input"
+              type="date"
+              required
+              value={saleDate}
+              onChange={(e) => setSaleDate(e.target.value)}
+            />
+          </Field>
           <Field label="Cliente" className="sm:col-span-1">
             <select
               className="input"
@@ -431,7 +455,16 @@ function Vendas() {
               Você pode alterar o cliente, a forma de pagamento, e adicionar, alterar quantidades ou excluir itens. O estoque dos produtos será recalculado automaticamente.
             </p>
 
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-4">
+              <Field label="Data da venda" className="sm:col-span-1">
+                <input
+                  className="input"
+                  type="date"
+                  required
+                  value={editingSale.sale_date || todayISO()}
+                  onChange={(e) => setEditingSale({ ...editingSale, sale_date: e.target.value })}
+                />
+              </Field>
               <Field label="Cliente" className="sm:col-span-1">
                 <select
                   className="input"

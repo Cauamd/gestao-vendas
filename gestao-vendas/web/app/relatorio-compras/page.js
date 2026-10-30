@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { api, brl } from '@/lib/api';
+import { api, brl, dateBR } from '@/lib/api';
 import { PageHeader, Field, ErrorNote, Empty } from '@/components/ui';
 import { Filter, Printer, X } from 'lucide-react';
 
@@ -199,7 +199,12 @@ export default function RelatorioComprasPage() {
                 const isPaid = item.payment_status === 'PAGO';
                 return (
                   <tr key={item.id} className="border-t border-slate-100 hover:bg-slate-50/50">
-                    <td className="p-3 font-semibold text-ink">{item.name}</td>
+                    <td className="p-3 font-semibold text-ink">
+                      <div>{item.name}</div>
+                      {item.purchase_date && (
+                        <div className="text-xs font-normal text-slate-500">Compra: {dateBR(item.purchase_date)}</div>
+                      )}
+                    </td>
                     <td className="p-3 font-medium text-slate-700">{item.product_name || '—'}</td>
                     <td className="p-3 text-center font-bold text-slate-800">{item.quantity}</td>
                     <td className="p-3 text-right text-slate-600">{brl(item.unit_price)}</td>

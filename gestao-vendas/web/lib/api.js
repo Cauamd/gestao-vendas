@@ -19,6 +19,11 @@ export async function api(path, { method = 'GET', body } = {}) {
 }
 
 export const brl = (n) => Number(n || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-export const dateBR = (s) => (s ? new Date(s.replace(' ', 'T')).toLocaleDateString('pt-BR') : '');
+export const dateBR = (s) => {
+  if (!s) return '';
+  const m = String(s).match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (m) return `${m[3]}/${m[2]}/${m[1]}`;
+  return new Date(String(s).replace(' ', 'T')).toLocaleDateString('pt-BR');
+};
 export const address = (c) =>
   [[c.street, c.number].filter(Boolean).join(', '), c.neighborhood, c.city, c.zip].filter(Boolean).join(' - ');
